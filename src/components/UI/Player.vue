@@ -1,30 +1,32 @@
 <template>
 	<div class="containerr">
 
-		<!-- Display Action -->
-		<div class="current-action" v-bind:class="{ hide: player.currentAction==='neutral' }">
-			{{ player.currentAction }}
-		</div>
+
 		
 		<!-- IMAGE -->
-		<div class="rock" v-if=" player.currentAction == 'neutral'">
+		<div class="rock" v-if=" $store.state.displayNeutralHand">
 			<i class="fas fa-fist-raised fa-2x"></i>
 		</div>
-		<div class="paper" v-if=" player.currentAction == 'paper'">
+		<div class="paper" v-if=" player.currentAction == 'paper' && !$store.state.displayNeutralHand">
 			<i ref="paper" class="fas fa-hand-paper fa-2x"></i>
 		</div>
-		<div class="neutral" v-if=" player.currentAction == 'rock'">
+		<div class="neutral" v-if=" player.currentAction == 'rock' && !$store.state.displayNeutralHand">
 			<i class="fas fa-hand-rock fa-2x"></i>
 		</div>
-		<div class="scissor" v-if=" player.currentAction == 'scissor'">
+		<div class="scissor" v-if=" player.currentAction == 'scissor' && !$store.state.displayNeutralHand">
 			<i class="fas fa-hand-peace fa-2x"></i>
 		</div>
 
+				<!-- Display Action -->
+		<div class="current-action" v-bind:class="{ hide: player.currentAction==='neutral' }">
+			{{ player.currentAction }}
+		</div>
+
 		<!-- BUTTONS -->
-		<div  class="buttons ">
-			<button @click="playHand('rock')">Rock</button>
-			<button @click="playHand('paper')">Paper</button>
-			<button @click="playHand('scissor')">Scissor</button>
+		<div  class="buttons" v-bind:class="{ hide: player.name==='Villain' }">
+			<button @click="playHand('rock')"><i class="fas fa-hand-rock fa-2x"></i></button>
+			<button @click="playHand('paper')"><i ref="paper" class="fas fa-hand-paper fa-2x"></i></button>
+			<button @click="playHand('scissor')"><i class="fas fa-hand-peace fa-2x"></i></button>
 		</div>
 
 	</div>
@@ -83,11 +85,16 @@ export default {
 			return Math.floor(Math.random() * 3);
 		},
 		playHand (heroAction) {
-			// delay for animation purposes
-			this.$store.commit('resetWinnerText')
-			const ref = this
-			
+			this.$store.commit('resetWinnerText') // remove last hands winner announced
+			this.$store.commit('displayNeutralHand', true)
+			// reset score for current round
+			if ( this.$store.state.endOfRound ) {
+				this.$store.commit('resetScore')
+				this.$store.commit('isNewRound')
+			}
 
+			// delay for animation purposes
+			const ref = this
 			setTimeout(function(){
 				var villainAction = ref.actions[ref.random()]
 				ref.$emit('actions_used', {heroAction: heroAction, villainAction: villainAction})
@@ -95,38 +102,34 @@ export default {
 			}, 500)
 		},
 		updateScore (winner) {
-			// check for winner of round (round finished)
+			// individual hands
+			if (winner == 'tie') {
+				this.$store.commit('tieGame')
+			} else if (winner == 'hero') {
+				this.$store.commit('heroWon')
+			} else {
+				this.$store.commit('villainWon')
+			}
+	
+			// check if round is finished & determine winner	
+			const handCounter = this.$store.state.handCounter
 			const heroScore = this.$store.state.heroScore			
-			const villainScore = this.$store.state.villainScore	
-			const tieScore = this.$store.state.tieScore	
-			var roundFinished = false
-			
-			if ( heroScore === 2) {
-				// hero won round
-				roundFinished = true
-				this.$store.commit('heroWonRound')
-			}
-			if ( villainScore === 2 ) {
-				// villain won round
-				roundFinished = true
-				this.$store.commit('villainWonRound')
-			}
-			if ( tieScore === 3 ) {
-				// tie-game
-				roundFinished = true
-				this.$store.commit('tieRound')
-			}
-
-
-			if ( !roundFinished ) {
-				if (winner == 'tie') {
-					this.$store.commit('tieGame')
-				} else if (winner == 'hero') {
-					this.$store.commit('heroWon')
+			const villainScore = this.$store.state.villainScore
+			if ( ( (handCounter) % 3) === 0) {
+				this.$store.commit('endOfRound')
+				if (heroScore === villainScore) {
+					// tie-game
+					this.$store.commit('tieRound')
+				} else if ( heroScore > villainScore ) {
+					// hero won round
+					this.$store.commit('heroWonRound')
 				} else {
-					this.$store.commit('villainWon')
+					// villain won round
+					this.$store.commit('villainWonRound')
 				}
-			}
+			} 
+
+			this.$store.commit('displayNeutralHand', false)
 		}
 	},
 }
@@ -134,27 +137,23 @@ export default {
 
 
 <style css scoped>
-	i {
-		
-	}
+
 	.paper, .rock, .scissor, .neutral {
 		font-size:100px;
+		text-align: center;
+	}
+	.current-action {
+		text-align: center;
 	}
 	.hide {
 		color:rgba(255, 255, 255, 0);
+		visibility: hidden;
 	}
 	.active {
 		display:none;
 	}
-	.containerr {
-		background:rgba(255, 0, 0, 0.5);
-		width:300px;
-		height:300px;
-		margin:10px;
-		display:flex;
-		flex-direction: column;
-		justify-content: space-around;
-		align-items: center;
+	.containerr > div {
+		margin:18px 0;
 	}
 	.img-container {
 		border:1px solid pink;
@@ -178,5 +177,25 @@ export default {
 		object-fit: cover;
 		height:100px;
 		width:100px;
+	}
+	.buttons {
+		display:flex;
+		justify-content: space-around;
+	}
+	button {
+		/* margin:40px 20px 0 0px; */
+		background:rgba(255, 255, 255, 0);
+		border:none;
+		border-radius: 100%;
+		/* outline:none; */
+		color: #15a915;
+		font-size:18px;
+	}
+	button:hover {
+		cursor: pointer;
+		border:none;
+		/* outline:none; */
+		color: #4be04b;
+
 	}
 </style>

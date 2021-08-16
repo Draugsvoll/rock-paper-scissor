@@ -3,7 +3,7 @@
 
 		<!-- SCOREBAORD -->
 		<div class="scorewindow">
-			<div class="round">Round</div>
+			<div class="round">Round {{ $store.state.roundsPlayed+1 }} </div>
 			<div class="score">
 				<div class="villain-win">
 					<div class="">Villain</div>
@@ -35,6 +35,9 @@
 			<player :player="hero" v-on:actions_used="actionsUsed($event)"></player>
 		</div>
 
+		<!-- POST HIGH-SCORE TO LEADERBOARD -->
+		<button @click="postScore()">Submit Score</button>
+		<p class="info">Requires at least 3 rounds</p>
 		
 	</div>
 </template>
@@ -44,6 +47,7 @@
 import Player from './Player.vue'
 
 import { useStore } from 'vuex'
+import firebase from 'firebase'
 
 export default {
 	data () {
@@ -65,16 +69,20 @@ export default {
 		this.hero.name = store.state.heroCurrentAction
 	},
 	methods: {
+		// update graphics after actions chosen
 		actionsUsed (actions) {
-			// reset winner text
-			// this.winnerLastHand = '.'
-			// show 'neutral' hand image
 			this.hero.currentAction = 'neutral'
 			this.villain.currentAction = 'neutral'
 
 			this.hero.currentAction = actions.heroAction
 			this.villain.currentAction = actions.villainAction
 		},
+		postScore() {
+			firebase.database().ref('/').push({
+				scoredata: { roundsPlayed: 10,  wins: 7, loss: 2, tie: 1, name: 'mitt navn'},
+			});
+			// const dbRef = firebase.database().ref();
+		}
 	},
 	components: {
 		Player
@@ -85,7 +93,6 @@ export default {
 
 <style css scoped>
 	.container {
-		background:rgba(255, 255, 0, 0.333);
 		margin:auto auto;
 		width:900px;
 		display:flex;
@@ -96,7 +103,10 @@ export default {
 	}
 	.playerContainer {
 		display: flex;
-		justify-content: space-between;
+		justify-content: space-around;
+	}
+	.playerContainer > div {
+		width:204px;
 	}
 	.scorewindow {
 		display:flex;
@@ -107,7 +117,12 @@ export default {
 		display: flex;
 		width:100%;
 		justify-content: space-around;
-		font-size: 35px;
+		font-size: 28px;
+		text-align: center;
+	}
+	.score > div {
+		width:204px;
+		margin: 30px 0 20px 0;
 	}
 	.current-round {
 		display:flex;
@@ -116,8 +131,9 @@ export default {
 		width:200px;
 	}
 	.winner-text {
-		margin-top:45px;
+		margin-top:75px;
 		text-align: center;
+		font-size: 19px;
 	}
 	.this-round-score {
 		display: flex;
@@ -130,6 +146,13 @@ export default {
 	}
 	.villain-score, .tie-score, .hero-score {
 		text-align: center;
+		margin-top: 5px;
+	}
+	.hero-score {
+		color: #15b615;
+	}
+	.villain-score {
+		color:red;
 	}
 	.tie {
 		visibility: hidden;
@@ -137,5 +160,22 @@ export default {
 	.round {
 		margin:auto auto;
 		font-size:28px;
+		text-decoration: underline;
+	}
+	button {
+		border-radius: 6px;
+		padding:10px;
+		max-width:120px;
+		margin:auto auto;
+		background:rgb(198, 205, 226);
+	}
+	button:hover {
+		cursor: pointer;
+		background:rgb(255, 255, 255);
+	}
+	.info {
+		margin:10px auto;
+		font-size: 12px;
+		color:rgb(216, 216, 216);
 	}
 </style>

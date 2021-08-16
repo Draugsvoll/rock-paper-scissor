@@ -5,14 +5,20 @@ const store = createStore({
         // individual hands
         villainScore: 0,
         heroScore: 0,
-        tieScore: 0,
-        handsPlayed: 0,
         winnerText: '.',
+        handCounter: 0,
 
-        // rounds won
+        // rounds
         heroRoundScore: 0,
         villainRoundScore: 0,
         roundsPlayed: 0,
+        endOfRound: false,
+
+        // playerImage
+        displayNeutralHand: true,
+
+        // database
+        database: 'seogh'
 
     },
     getters:{},
@@ -20,40 +26,62 @@ const store = createStore({
         // individual hands
         heroWon(state) {
             state.heroScore++
-            state.handsPlayed++
-            state.winnerText = 'You won 1111'
+            state.handCounter++
+            state.winnerText = 'You won the hand'
         },
         villainWon(state) {
             state.villainScore++
-            state.handsPlayed++
-            state.winnerText = 'You lost 2222'
+            state.handCounter++
+            state.winnerText = 'You lost the hand'
         },
         tieGame(state) {
             state.tieScore++
-            state.handsPlayed++
-            state.winnerText = 'Tie 3333'
+            state.handCounter++
+            state.winnerText = 'Tie '
         },
         resetWinnerText(state) {
             state.winnerText = '.'
         },
+        resetScore(state) {
+            state.heroScore = 0
+            state.villainScore = 0
+        },
 
         // Rounds
         heroWonRound(state) {
-            console.log('inside store')
-            state.heroScore = 0
-            state.villainScore = 0
+            state.roundsPlayed++
             state.heroRoundScore++
-            state.winnerText = 'Hero won this round'
+            state.winnerText = 'You won round ' + state.roundsPlayed
         },
         villainWonRound(state) {
+            state.roundsPlayed++
             state.villainRoundScore++
-            state.winnerText = 'Villain won this round'
+            state.winnerText = 'Villain won round ' + state.roundsPlayed
         },
         tieRound(state) {
-            state.winnerText = 'Tie-game this round'
+            state.roundsPlayed++
+            state.winnerText = 'Round  ' + state.roundsPlayed + ' is a tie-game'
+        },
+        endOfRound(state) {
+            state.endOfRound = true
+        },
+        isNewRound(state) {
+            state.endOfRound = false
+        },
+
+        // image/display
+        displayNeutralHand(state, display) {
+            state.displayNeutralHand = display
+        },
+        
+        // database
+        setDatabase(state, data) {
+            state.database = data
         },
     },
-    actions:{},
+    actions:{
+
+    },
 })
 
 export default store
