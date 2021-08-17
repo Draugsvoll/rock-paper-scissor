@@ -2,7 +2,7 @@
 	<div class="container">
 
 		<h2>Leaderboard <span>Firebase</span></h2> 
-			{{ this.$store.state.database }}
+			<!-- {{ this.$store.state.database }} -->
 		<div class="tags">
 			<div class="tag player"></div>
 			<div class="tag">Winrate</div>
@@ -26,7 +26,7 @@
 
 
 <script>
-// import firebase from 'firebase'
+import firebase from 'firebase'
 // import { DB } from 'main.js'
 
 export default {
@@ -36,20 +36,20 @@ export default {
 		}
 	},
 	mounted () {
-		const ref = this
-		setTimeout(function () {
-			ref.$store.dispatch('getDatabase')
-		}, 2500)
+		// SUPPOSED TO FETCH DATABASE FROM STORE ACTION
+			// this.$store.commit('getDatabase')
 
-		// var database = []
-		// firebase.firestore().collection('players').get().then( (data) => {
-		// 	data.forEach( player => {
-		// 		// console.log(player.data())
-		// 		database.push(player.data())
-		// 	})
-		// 	this.$store.commit('setDatabase', database)
-		// 	this.database = database
-		// })
+		// fetch database
+		var database = []
+		firebase.firestore().collection('players').get().then( (data) => {
+			data.forEach( player => {
+				// console.log(player.data())
+				database.push(player.data())
+			})
+			console.log(database)
+			this.$store.commit('setDatabase', database)
+			this.database = database
+		})
 
 
 	}

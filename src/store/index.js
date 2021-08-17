@@ -19,7 +19,7 @@ const store = createStore({
         displayNeutralHand: true,
 
         // database
-        database: 'wsgjaagawgawgawghereger'
+        database: undefined,
 
     },
     getters:{},
@@ -87,12 +87,12 @@ const store = createStore({
         getDatabase: ({ commit }) => {
             var database = []
             firebase.firestore().collection('players').get().then( (data) => {
-                console.log('inside firebase function')
                 data.forEach( player => {
                     // console.log(player.data())
                     database.push(player.data())
                 })
             })
+            console.log('inside firebase function', typeof database, database[0])
             commit('insertDatabase', database)
         }
     },

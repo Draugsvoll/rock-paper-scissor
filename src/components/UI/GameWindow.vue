@@ -36,7 +36,12 @@
 		</div>
 
 		<!-- POST HIGH-SCORE TO LEADERBOARD -->
-		<button @click="postScore()">Submit Score</button> 
+		<div class="submit-container">
+			<button @click="postScore()">Submit Score</button>
+			<input ref="input" type="text" placeholder="Inser name">
+		</div>
+
+		
 		<p class="info">Requires at least 3 rounds</p>
 		
 	</div>
@@ -78,10 +83,28 @@ export default {
 		},
 		postScore() {
 			const data = this.$store.state	
+			var name = this.$refs['input'].value
+			
+			if ( name == '') alert('Insert Name')
 			if ( (data.roundsPlayed) > 2) {
-				var player = {name: 'test', wins: data.heroRoundScore, loss: data.villainRoundScore, tie: 0, roundsPlayed:data.roundsPlayed }
+				var player = {name: name, wins: data.heroRoundScore, loss: data.villainRoundScore, tie: 0, roundsPlayed:data.roundsPlayed }
 				firebase.firestore().collection('players').doc().set(player)
-				this.$store.dispatch('getDatabase')
+
+				// SUPPOSED TO FETCH DATABASE FROM STORE ATION
+				// this.$store.dispatch('getDatabase')
+
+				// fetch database
+				var database = []
+				firebase.firestore().collection('players').get().then( (data) => {
+					data.forEach( player => {
+						// console.log(player.data())
+						database.push(player.data())
+					})
+					console.log(database)
+					this.$store.commit('setDatabase', database)
+					this.database = database
+				})
+				
 			} else {
 				alert('Complete at least 3 rounds')
 			}
@@ -170,17 +193,26 @@ export default {
 		border-radius: 6px;
 		padding:10px;
 		max-width:120px;
-		margin:auto auto;
-		margin-top:35px;
 		background:rgb(198, 205, 226);
+		margin-right:15px;
 	}
 	button:hover {
 		cursor: pointer;
 		background:rgb(255, 255, 255);
 	}
+	.submit-container {
+		margin-top:25px;
+		display: flex;
+		justify-content:center;
+	}
 	.info {
 		margin:10px auto;
 		font-size: 12px;
 		color:rgb(216, 216, 216);
+	}
+	input {
+		width:150px;
+		font-size: 16px;
+		padding:5px;
 	}
 </style>
