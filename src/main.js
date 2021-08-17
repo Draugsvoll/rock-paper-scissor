@@ -7,6 +7,8 @@ import firebase from 'firebase'
 import '@fortawesome/fontawesome-free/css/all.css'
 import '@fortawesome/fontawesome-free/js/all.js'
 
+// App.config.devtools = true;
+
 // Your web app's Firebase configuration
 var firebaseConfig = {
   apiKey: process.env.VUE_APP__API_KEY,

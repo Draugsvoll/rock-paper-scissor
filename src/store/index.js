@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import firebase from 'firebase'
 
 const store = createStore({
     state:{
@@ -18,7 +19,7 @@ const store = createStore({
         displayNeutralHand: true,
 
         // database
-        database: 'seogh'
+        database: 'wsgjaagawgawgawghereger'
 
     },
     getters:{},
@@ -27,15 +28,14 @@ const store = createStore({
         heroWon(state) {
             state.heroScore++
             state.handCounter++
-            state.winnerText = 'You won the hand'
+            state.winnerText = 'You won '
         },
         villainWon(state) {
             state.villainScore++
             state.handCounter++
-            state.winnerText = 'You lost the hand'
+            state.winnerText = 'You lost '
         },
         tieGame(state) {
-            state.tieScore++
             state.handCounter++
             state.winnerText = 'Tie '
         },
@@ -78,9 +78,23 @@ const store = createStore({
         setDatabase(state, data) {
             state.database = data
         },
+        insertDatabase(state, database) {
+            console.log('inside mutation ', database)
+            state.database = database
+        },
     },
     actions:{
-
+        getDatabase: ({ commit }) => {
+            var database = []
+            firebase.firestore().collection('players').get().then( (data) => {
+                console.log('inside firebase function')
+                data.forEach( player => {
+                    // console.log(player.data())
+                    database.push(player.data())
+                })
+            })
+            commit('insertDatabase', database)
+        }
     },
 })
 

@@ -36,7 +36,7 @@
 		</div>
 
 		<!-- POST HIGH-SCORE TO LEADERBOARD -->
-		<button @click="postScore()">Submit Score</button>
+		<button @click="postScore()">Submit Score</button> 
 		<p class="info">Requires at least 3 rounds</p>
 		
 	</div>
@@ -46,7 +46,7 @@
 <script>
 import Player from './Player.vue'
 
-import { useStore } from 'vuex'
+// import { useStore } from 'vuex'
 import firebase from 'firebase'
 
 export default {
@@ -65,23 +65,27 @@ export default {
 		}
 	},
 	mounted () {
-		const store = useStore()
-		this.hero.name = store.state.heroCurrentAction
+		// const store = useStore()
+		// this.hero.name = store.state.heroCurrentAction
 	},
 	methods: {
 		// update graphics after actions chosen
 		actionsUsed (actions) {
 			this.hero.currentAction = 'neutral'
 			this.villain.currentAction = 'neutral'
-
 			this.hero.currentAction = actions.heroAction
 			this.villain.currentAction = actions.villainAction
 		},
 		postScore() {
-			firebase.database().ref('/').push({
-				scoredata: { roundsPlayed: 10,  wins: 7, loss: 2, tie: 1, name: 'mitt navn'},
-			});
-			// const dbRef = firebase.database().ref();
+			const data = this.$store.state	
+			if ( (data.roundsPlayed) > 2) {
+				var player = {name: 'test', wins: data.heroRoundScore, loss: data.villainRoundScore, tie: 0, roundsPlayed:data.roundsPlayed }
+				firebase.firestore().collection('players').doc().set(player)
+				this.$store.dispatch('getDatabase')
+			} else {
+				alert('Complete at least 3 rounds')
+			}
+
 		}
 	},
 	components: {
@@ -167,7 +171,7 @@ export default {
 		padding:10px;
 		max-width:120px;
 		margin:auto auto;
-		margin-top:75px;
+		margin-top:35px;
 		background:rgb(198, 205, 226);
 	}
 	button:hover {
