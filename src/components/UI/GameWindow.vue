@@ -146,7 +146,7 @@ export default {
 	}
 	.villain-score, .tie-score, .hero-score {
 		text-align: center;
-		margin-top: 5px;
+		margin-top: 10px;
 	}
 	.hero-score {
 		color: #15b615;
@@ -167,6 +167,7 @@ export default {
 		padding:10px;
 		max-width:120px;
 		margin:auto auto;
+		margin-top:75px;
 		background:rgb(198, 205, 226);
 	}
 	button:hover {

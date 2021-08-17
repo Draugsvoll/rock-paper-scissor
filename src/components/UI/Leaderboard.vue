@@ -1,11 +1,20 @@
 <template>
 	<div class="container">
-		Leaderboard
-		<div class="players" v-for="(player, index) in $store.state.database" :key="index">
-			{{ player.name }}
-			{{ player.wins }}
-			{{ player.loss }}
+
+		<h2>Leaderboard</h2>
+		<div class="tags">
+			<div class="tag player">Player</div>
+			<div class="tag">Wins</div>
+			<div class="tag">Loss</div>
+			<div class="tag">Tie</div>
 		</div>
+		<div class="players" v-for="(player, index) in $store.state.database" :key="index">
+			<div class="tag player">  {{ index+1}}. {{ player.name }} </div>
+			<div class="tag"> {{ player.wins }} </div>
+			<div class="tag"> {{ player.loss }} </div>
+			<div class="tag"> {{ player.tie }} </div>
+		</div>
+
 	</div>
 </template>
 
@@ -44,9 +53,26 @@ export default {
 
 <style scoped>
 	.container {
-		background:rgba(0, 255, 187, 0.333);
-		margin:100px auto;
-		height:600px;
-		width:1100px;
+		background:rgba(5, 68, 87, 0.973);
+		margin:75px auto;
+		/* height:600px; */
+		max-width:800px;
+		padding:5px;
+
+	}
+	.tag {
+		min-width:100px;
+	}
+	.tags {
+		display:flex;
+	}
+	.players {
+		display: flex;
+	}
+	.player {
+		width:200px;
+	}
+	h2 {
+		text-align: center;
 	}
 </style>

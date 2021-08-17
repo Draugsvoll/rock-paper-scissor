@@ -20,7 +20,7 @@ export default {
 }
 .container {
 	max-width:550px;
-	margin:50px auto;
+	margin:75px auto;
 	text-align: center;
 	margin-bottom:100px;
 }
@@ -36,7 +36,7 @@ p {
 	font-size: 15px;
 }
 h1 {
-	font-size: 45px;
+	font-size: 42px;
 	letter-spacing: 5px;
 }
 </style>

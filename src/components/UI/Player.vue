@@ -139,7 +139,7 @@ export default {
 <style css scoped>
 
 	.paper, .rock, .scissor, .neutral {
-		font-size:100px;
+		font-size:80px;
 		text-align: center;
 	}
 	.current-action {
@@ -187,7 +187,7 @@ export default {
 		background:rgba(255, 255, 255, 0);
 		border:none;
 		border-radius: 100%;
-		/* outline:none; */
+		outline:none;
 		color: #15a915;
 		font-size:18px;
 	}
@@ -196,6 +196,9 @@ export default {
 		border:none;
 		/* outline:none; */
 		color: #4be04b;
+	}
+	button:active {
+		color: #169196;
 
 	}
 </style>
