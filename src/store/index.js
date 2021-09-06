@@ -88,12 +88,12 @@ const store = createStore({
             var database = []
             firebase.firestore().collection('players').get().then( (data) => {
                 data.forEach( player => {
-                    // console.log(player.data())
                     database.push(player.data())
                 })
+                console.log(database)
+                commit('insertDatabase', database)
             })
-            console.log('inside firebase function', typeof database, database[0])
-            commit('insertDatabase', database)
+            
         }
     },
 })

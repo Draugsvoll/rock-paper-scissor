@@ -26,40 +26,27 @@
 
 
 <script>
-import firebase from 'firebase'
+// import firebase from 'firebase'
+import { onMounted } from '@vue/runtime-core'
+import { useStore } from 'vuex'
 // import { DB } from 'main.js'
 
 export default {
-	data: function () {
-		return {
-			database: 'aff'
-		}
-	},
-	mounted () {
-		// SUPPOSED TO FETCH DATABASE FROM STORE ACTION
-			// this.$store.commit('getDatabase')
-
-		// fetch database
-		var database = []
-		firebase.firestore().collection('players').get().then( (data) => {
-			data.forEach( player => {
-				// console.log(player.data())
-				database.push(player.data())
-			})
-			console.log(database)
-			this.$store.commit('setDatabase', database)
-			this.database = database
+	setup () {
+		const store = useStore()
+		let database = 'not fetched yet'
+		onMounted( () =>  {
+			store.dispatch('getDatabase')
 		})
-
-
-	}
+		return { database }
+	},
 }
 </script>
 
 
 <style scoped>
 	.container {
-		background:rgba(5, 68, 87, 0.97		);
+		background:rgba(41, 62, 68, 0.97);
 		margin:75px auto;
 		/* height:600px; */
 		max-width:800px;
